@@ -140,7 +140,7 @@ GROUP BY Age_Group
 ORDER BY FIELD ( Age_Group,'18-25','26-35','36-50','51+') ;
 ```
 
-9. ** Find all categories where total revenue exceeds 150,000**:
+9. **Find all categories where total revenue exceeds 150,000**:
 ```sql
 SELECT category , SUM(total_sale) AS 'Total_Sales'
 FROM sales_data
