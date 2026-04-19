@@ -81,7 +81,7 @@ GROUP BY category
 ORDER BY Total_Revenue DESC;
 ```
 
-3. **How many transactions were made by each gender?**:
+3. ** How many transactions were made by each gender? **:
 ```sql
 SELECT gender ,COUNT(transactions_id) AS 'Total_Transaction'
 FROM sales_data
@@ -89,7 +89,7 @@ GROUP BY gender
 ORDER BY Total_Transaction;
 ```
 
-4. **What is the average price per unit for each product category?**:
+4. ** What is the average price per unit for each product category? **:
 ```sql
 SELECT category , ROUND(AVG(price_per_unit)) AS 'Avg_Price'.               -- > ROUND FUNCTION IMPORTANCE 
 FROM sales_data
