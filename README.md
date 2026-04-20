@@ -158,6 +158,117 @@ ORDER BY Total_spend DESC;
 
 ```
 
+11. **Calculate total revenue, total COGS, and gross profit for each category.**:
+```sql
+SELECT category, SUM(total_sale) AS 'Total_Revenue', SUM(cogs) AS 'Total_Cost', SUM(total_sale) - SUM(cogs) AS 'Gross_Profit'
+FROM sales_data
+GROUP BY category 
+ORDER BY Gross_Profit DESC;
+
+```
+
+12. **Find the total revenue contributed by female customers per category.       				-- GROUP BY 2 Categories **:
+```sql
+SELECT category ,gender , SUM(total_sale) AS 'Total_Revenue'
+FROM sales_data 
+WHERE gender = 'Female'  
+GROUP BY gender ,category               
+ORDER BY Total_Revenue DESC;
+
+```
+
+13. **For each category, show the highest single transaction value, the lowest, and the difference between them.**:
+```sql
+SELECT category, MAX(total_sale) AS 'Max_Transaction' , MIN(total_sale) AS 'Min_Transction', MAX(total_sale) - MIN(total_sale) AS 'Difference'
+FROM sales_data 
+GROUP BY category 
+ORDER BY Difference DESC;
+
+```
+
+14. **Calculate total revenue month-by-month. Which month had the highest sales?**:
+```sql
+SELECT MONTH(sale_date)AS 'Month' , SUM(total_sale) AS 'Total_Revenue_Month'
+FROM sales_data
+GROUP BY Month
+ORDER BY Total_Revenue_Month ASC;
+
+```
+
+15. **In a single query, find total revenue from Male vs Female customers for each category (pivot-style).        --GOOD CONCEPT--**:
+```sql
+SELECT category,
+SUM( CASE WHEN gender = 'Male' THEN total_sale ELSE 0 END ) AS 'Male_Sales',
+SUM( CASE WHEN gender = 'Female' THEN total_sale ELSE 0 END ) AS 'Female_Sales'    
+FROM sales_data 
+GROUP BY category
+ORDER BY category DESC;
+
+```
+
+16. **How many transactions occurred in each category during Q4 (October to December)?**:
+```sql
+SELECT category , MONTH(sale_date) AS 'Month' , COUNT(transactions_id) AS 'Total_count'     
+FROM sales_data
+WHERE MONTH(sale_date) BETWEEN 10 AND 12
+GROUP BY category, month
+ORDER BY category, Total_count DESC;
+
+```
+
+17. **Find customers whose average transaction value is above 500. These are your premium segment.    -- IMPORTANT QUESTION --**:
+```sql
+SELECT customer_id, AVG(total_sale) AS 'Average_Value', COUNT(*) 
+FROM sales_data 
+GROUP BY customer_id
+HAVING AVG(total_sale) > 500 
+ORDER BY COUNT(*)  DESC;
+
+```
+
+18. **Find all transactions where the total sales value is above the overall average transaction value.   -- HARD QUESTION --**:
+```sql
+SELECT transactions_id , customer_id , category, total_sale
+FROM sales_data 
+WHERE total_sale > (SELECT AVG(total_sale) FROM sales_data)
+ORDER BY total_sale DESC;
+
+```
+
+19. **Find categories whose average transaction value is higher than the overall average transaction value across all categories.**:
+```sql
+SELECT category,
+  ROUND(AVG(total_sale)) AS avg_txn_value
+FROM sales_data
+GROUP BY category
+HAVING AVG(total_sale) > (
+  SELECT ROUND(AVG(total_sale)) FROM sales_data
+);
+
+```
+
+20. **Classify each customer as 'Platinum' (spend > 2000), 'Gold' (1000–2000), or 'Silver' (<1000) and count customers in each tier.**:
+```sql
+SELECT 
+    CASE 
+        WHEN total_spend > 2000 THEN 'Platinum'
+        WHEN total_spend BETWEEN 1000 AND 2000 THEN 'Gold'
+        ELSE 'Silver'
+    END AS customer_tier,
+    COUNT(*) AS customer_count
+FROM (
+    SELECT 
+        customer_id,
+        SUM(total_sale) AS total_spend
+    FROM sales_data
+    GROUP BY customer_id
+) AS t
+GROUP BY customer_tier
+ORDER BY customer_count DESC;
+
+```
+
+
 ## Findings
 
 - **Customer Demographics**: The dataset includes customers from various age groups, with sales distributed across different categories such as Clothing and Beauty.
